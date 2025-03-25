@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  title: Movie Theater Payment API
+  version: 1.0.0
+  description: |
+    API for handling payments for online movie ticket purchases. Allows customers to make secure payments, view payment status, and cancel transactions.
+
+paths:
+  /payments:
+    post:
+      summary: Make a Payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                amount:
+                  type: number
+                paymentMethod:
+                  type: string
+                cardInfo:
+                  type: object
+                  properties:
+                    cardNumber:
+                      type: string
+                    expiryDate:
+                      type: string
+                    cvv:
+                      type: string
+              required:
+                - orderId
+                - amount
+                - paymentMethod
+                - cardInfo
+      responses:
+        '200':
+          description: Payment Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentId:
+                    type: string
+                  status:
+                    type: string
+                  confirmationNumber:
+                    type: string
+        '400':
+          description: Invalid Payment Details
+        '500':
+          description: Payment Server Error
+
+  /payments/{paymentId}:
+    get:
+      summary: Get Payment Status
+      parameters:
+        - in: path
+          name: paymentId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentId:
+                    type: string
+                  status:
+                    type: string
+        '404':
+          description: Payment Not Found
+        '500':
+          description: Server Error
+
+    delete:
+      summary: Cancel Payment
+      parameters:
+        - in: path
+          name: paymentId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment Cancelled Successfully
+        '404':
+          description: Payment Not Found
+        '500':
+          description: Server Error
